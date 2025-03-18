@@ -11,5 +11,7 @@ router.post("/register", authController.register);
 router.delete("/logout", authMiddleware, authController.logout);
 router.get('/google', passport.authenticate('google', { scope: ['profile', 'email'] }));
 router.get('/google/callback', passport.authenticate('google', { failureRedirect: '/' }), authController.googleAuthCallback);
+router.post("/sendOtp", authController.sendOTP);
+router.post("/verifyOtp", authController.verifyOTP);
 
 module.exports = router;

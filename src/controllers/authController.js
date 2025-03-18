@@ -1,9 +1,11 @@
 const { successResponse, errorResponse } = require("../utils/response");
 const { StatusCodes } = require("http-status-codes");
 const userService = require("../services/userService");
+const otpService = require("../services/otpService");
 const bcrypt = require("bcryptjs");
 const { createAccessToken, createRefreshToken } = require("../utils/jwt");
 const ms = require("ms");
+const otpGenerator = require("otp-generator");
 
 const login = async (req, res) => {
     try {
@@ -69,7 +71,8 @@ const register = async (req, res) => {
         const user = await userService.create({
             name,
             email,
-            password: hashPassword
+            password: hashPassword,
+            role: "applicant"
         });
 
         const accessToken = createAccessToken({
@@ -155,9 +158,84 @@ const googleAuthCallback = async (req, res) => {
     }
 };
 
+const sendOTP = async (req, res) => {
+    const { username } = req.body;
+
+    const otp = otpGenerator.generate(6, {
+        upperCaseAlphabets: false,
+        lowerCaseAlphabets: false,
+        specialChars: false,
+        digits: true
+    });
+
+    try {
+        const userExist = await userService.findOne({ username });
+        if (userExist) {
+            return errorResponse(res, StatusCodes.CONFLICT, "Email đã tồn tại");
+        }
+
+        await mail.sendVerificationEmail(username, otp);
+
+        const expire = new Date();
+        expire.setMinutes(expire.getMinutes() + 5);
+
+        await otpService.create({
+            email: username,
+            otp: otp,
+            expire
+        });
+
+        return successResponse(res, StatusCodes.OK, "Gửi thành công otp.");
+    } catch (error) {
+        //console.log(error)
+        return errorResponse(
+            res,
+            StatusCodes.INTERNAL_SERVER_ERROR,
+            error.message
+        );
+    }
+}
+
+const verifyOTP = async (req, res) => {
+    const { username, otp } = req.body;
+    const time = new Date();
+
+    try {
+        const otpEx = await otpService.findOne({
+            email: username
+        });
+
+        if (otpEx.expire < time) {
+            return errorResponse(
+                res,
+                StatusCodes.CONFLICT,
+                "OTP đã hết hạn."
+            );
+        };
+
+        if (otpEx.otp != otp) {
+            return errorResponse(
+                res,
+                StatusCodes.CONFLICT,
+                "OTP không đúng."
+            );
+        }
+
+        return successResponse(res, StatusCodes.OK, "Xác thực OTP thành công.");
+    } catch (error) {
+        return errorResponse(
+            res,
+            StatusCodes.INTERNAL_SERVER_ERROR,
+            error.message
+        );
+    }
+}
+
 module.exports = {
     login,
     register,
     logout,
-    googleAuthCallback
+    googleAuthCallback,
+    verifyOTP,
+    sendOTP
 }

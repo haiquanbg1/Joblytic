@@ -2,14 +2,18 @@ const { StatusCodes } = require("http-status-codes");
 const userService = require("../services/userService");
 const { successResponse, errorResponse } = require("../utils/response");
 const bcrypt = require("bcryptjs");
+const { uploadFile, getFile, deleteFile } = require("../utils/minio");
 
 const findUser = async (req, res) => {
     const user = req.user;
 
     try {
+        const avatar = await getFile("avatar", `user${user.id}`);
+
         return successResponse(res, StatusCodes.OK, "Thành công.", {
             name: user.name,
             email: user.email,
+            avatar
         });
     } catch (error) {
         return errorResponse(
@@ -22,10 +26,16 @@ const findUser = async (req, res) => {
 
 const update = async (req, res) => {
     const user = req.user;
-    const { name } = req.body;
+    const { name, phone } = req.body;
+
+    const updateClause = Object.assign(
+        {},
+        name && { name },
+        phone && { phone }
+    );
 
     try {
-        await userService.update(user.id, { name });
+        await userService.update(user.id, updateClause);
 
         return successResponse(res, StatusCodes.OK, "Cập nhật thông tin thành công.");
     } catch (error) {
@@ -41,6 +51,7 @@ const deleteAccount = async (req, res) => {
     const user = req.user;
 
     try {
+        await deleteFile("avatar", `user${user.id}`)
         await user.destroy();
 
         return successResponse(res, StatusCodes.OK, "Xoá thành công.");
@@ -89,9 +100,34 @@ const changePassword = async (req, res) => {
     }
 }
 
+const changeAvatar = async (req, res) => {
+    const user = req.user;
+    const image = req.file;
+    try {
+        const avatar = await uploadFile("avatar", image.path, `user${user.id}`);
+
+        await userService.update(user.id, {
+            avatar: image.filename
+        });
+
+        fs.unlinkSync(image.path);
+
+        return successResponse(res, StatusCodes.OK, "Đổi avatar thành công.", {
+            avatar: avatar.secure_url
+        });
+    } catch (error) {
+        return errorResponse(
+            res,
+            StatusCodes.INTERNAL_SERVER_ERROR,
+            error.message
+        );
+    }
+}
+
 module.exports = {
     findUser,
     update,
     deleteAccount,
     changePassword,
+    changeAvatar
 }

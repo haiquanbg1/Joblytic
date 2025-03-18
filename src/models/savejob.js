@@ -11,6 +11,19 @@ module.exports = (sequelize, DataTypes) => {
      */
     static associate(models) {
       // define association here
+      SaveJob.belongsTo(models.User, {
+        foreignKey: "user_id",
+        onDelete: 'CASCADE',
+        onUpdate: 'CASCADE',
+        as: "user"
+      });
+
+      SaveJob.belongsTo(models.Job, {
+        foreignKey: "job_id",
+        onDelete: 'CASCADE',
+        onUpdate: 'CASCADE',
+        as: "job"
+      });
     }
   }
   SaveJob.init({

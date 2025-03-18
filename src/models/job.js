@@ -11,6 +11,27 @@ module.exports = (sequelize, DataTypes) => {
      */
     static associate(models) {
       // define association here
+      Job.belongsTo(models.Category, {
+        foreignKey: 'category_id',
+        as: 'category'
+      });
+
+      Job.belongsToMany(models.User, {
+        through: 'SaveJob',
+        foreignKey: 'job_id',
+        otherKey: 'user_id',
+        as: 'users'
+      });
+
+      Job.belongsTo(models.Company, {
+        foreignKey: 'company_id',
+        as: 'company'
+      });
+
+      Job.hasMany(models.Application, {
+        foreignKey: "job_id",
+        as: "applications"
+      });
     }
   }
   Job.init({
@@ -21,7 +42,7 @@ module.exports = (sequelize, DataTypes) => {
     salary: DataTypes.STRING,
     location: DataTypes.STRING,
     category_id: DataTypes.INTEGER,
-    type: DataTypes.ENUM,
+    type: DataTypes.ENUM('Full-time', 'Part-time', 'Freelance'),
     created_at: DataTypes.DATE,
     expires_at: DataTypes.DATE
   }, {
