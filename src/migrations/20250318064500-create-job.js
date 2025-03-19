@@ -41,7 +41,7 @@ module.exports = {
       type: {
         type: Sequelize.ENUM('Full-time', 'Part-time', 'Freelance')
       },
-      expires_at: {
+      expiresAt: {
         type: Sequelize.DATE
       },
       createdAt: {

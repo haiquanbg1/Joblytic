@@ -31,6 +31,11 @@ module.exports = (sequelize, DataTypes) => {
         as: "applications"
       });
 
+      Applicant.hasMany(models.Education, {
+        foreignKey: "applicant_id",
+        as: "educations"
+      });
+
       Applicant.belongsToMany(models.Skill, {
         through: 'ApplicantSkill',
         foreignKey: 'applicant_id',

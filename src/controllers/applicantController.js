@@ -1,14 +1,39 @@
 const { StatusCodes } = require("http-status-codes");
 const applicantService = require("../services/applicantService");
 const skillService = require("../services/skillService");
+const experienceService = require("../services/experienceService");
 const { successResponse, errorResponse } = require("../utils/response");
+const { getFile } = require("../utils/minio");
 
 const findOne = async (req, res) => {
     const applicant = req.applicant;
+    const user = req.user;
 
     try {
         const skills = await skillService.findAll(applicant.id);
-        return successResponse(res, StatusCodes.OK, "OK", applicant);
+        const experiences = await experienceService.findAll({
+            applicant_id: applicant.id
+        });
+
+        const avatar = await getFile("avatar", `user${user.id}`);
+
+        let response = {
+            name: user.name,
+            email: user.email,
+            phone: user.phone,
+            avatar,
+            salary: applicant.salary,
+            location: applicant.location,
+            github: applicant.github,
+            facebook: applicant.facebook,
+            linkedin: applicant.linkedin,
+            birthday: applicant.birthday,
+            description: applicant.description,
+            skills,
+            experiences
+        };
+
+        return successResponse(res, StatusCodes.OK, "OK", response);
     } catch (error) {
         return errorResponse(
             res,

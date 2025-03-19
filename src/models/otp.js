@@ -1,25 +1,10 @@
-'use strict';
-const {
-  Model
-} = require('sequelize');
-module.exports = (sequelize, DataTypes) => {
-  class Otp extends Model {
-    /**
-     * Helper method for defining associations.
-     * This method is not a part of Sequelize lifecycle.
-     * The `models/index` file will call this method automatically.
-     */
-    static associate(models) {
-      // define association here
-    }
-  }
-  Otp.init({
-    otp: DataTypes.STRING,
-    email: DataTypes.STRING,
-    expire: DataTypes.DATE
-  }, {
-    sequelize,
-    modelName: 'Otp',
-  });
-  return Otp;
-};
+const mongoose = require('mongoose');
+
+const otpSchema = new mongoose.Schema({
+  otp: { type: String, required: true },
+  email: { type: String, required: true },
+  expire: { type: Date }
+});
+
+// Tạo model từ schema
+module.exports = mongoose.model('Otp', otpSchema);

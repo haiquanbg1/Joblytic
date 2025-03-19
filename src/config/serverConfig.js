@@ -10,6 +10,7 @@ var session = require("express-session");
 const passport = require("./passport");
 const { corsOptions } = require("../config/corsOptions");
 const http = require("http");
+const mongodb = require("../utils/mongodb");
 
 module.exports = (app) => {
     app.use(
@@ -51,6 +52,8 @@ module.exports = (app) => {
         res.status(err.status || 500);
         res.send(err);
     });
+
+    mongodb();
 
     const server = http.createServer(app);
 

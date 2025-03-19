@@ -6,5 +6,6 @@ const router = express.Router();
 
 router.patch("/", authMiddleware, applicantMiddleware, applicantController.update);
 router.get("/", authMiddleware, applicantMiddleware, applicantController.findOne);
+router.post("/addSkill", authMiddleware, applicantMiddleware, applicantController.addSkill);
 
 module.exports = router;

@@ -43,8 +43,8 @@ module.exports = (sequelize, DataTypes) => {
     location: DataTypes.STRING,
     category_id: DataTypes.INTEGER,
     type: DataTypes.ENUM('Full-time', 'Part-time', 'Freelance'),
-    created_at: DataTypes.DATE,
-    expires_at: DataTypes.DATE
+    createdAt: DataTypes.DATE,
+    expiresAt: DataTypes.DATE
   }, {
     sequelize,
     modelName: 'Job',

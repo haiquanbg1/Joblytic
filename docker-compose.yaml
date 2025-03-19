@@ -1,0 +1,52 @@
+version: '3.8'
+
+services:
+  mongodb:
+    image: mongo:latest
+    container_name: mongodb
+    restart: always
+    environment:
+      - MONGO_INITDB_ROOT_USERNAME=root
+      - MONGO_INITDB_ROOT_PASSWORD=123456
+      - MONGO_INITDB_DATABASE=joblytic
+    ports:
+      - "27017:27017" # Để có thể kết nối tới MongoDB từ bên ngoài container
+    volumes:
+      - mongodb-data:/data/db # Lưu dữ liệu MongoDB vào volume
+
+  minio:
+    image: minio/minio:latest
+    container_name: minio
+    restart: always
+    environment:
+      - MINIO_ROOT_USER=minio
+      - MINIO_ROOT_PASSWORD=123456
+    ports:
+      - "9000:9000"  # Truy cập MinIO qua cổng 9000
+      - "9001:9001"  # Truy cập MinIO Console qua cổng 9001
+    command: server /data
+    volumes:
+      - minio-data:/data  # Lưu trữ dữ liệu MinIO vào volume
+  
+  elasticsearch:
+    image: docker.elastic.co/elasticsearch/elasticsearch:8.6.0
+    container_name: elasticsearch
+    environment:
+      - discovery.type=single-node
+      - ES_JAVA_OPTS=-Xms512m -Xmx512m  # Tùy chỉnh bộ nhớ nếu cần
+    ports:
+      - "9200:9200"  # Elasticsearch REST API
+      - "9300:9300"  # Port giao tiếp giữa các node
+    networks:
+      - elastic_network
+    volumes:
+      - elasticsearch-data:/usr/share/elasticsearch/data
+    ulimits:
+      memlock:
+        soft: -1
+        hard: -1
+
+volumes:
+  mongodb-data:
+  minio-data:
+  elasticsearch-data:

@@ -2,20 +2,30 @@
 /** @type {import('sequelize-cli').Migration} */
 module.exports = {
   async up(queryInterface, Sequelize) {
-    await queryInterface.createTable('Otps', {
+    await queryInterface.createTable('Education', {
       id: {
         allowNull: false,
         autoIncrement: true,
         primaryKey: true,
         type: Sequelize.INTEGER
       },
-      otp: {
+      applicant_id: {
+        type: Sequelize.INTEGER,
+        references: {
+          model: 'Applicants',
+          key: 'id'
+        }
+      },
+      school: {
         type: Sequelize.STRING
       },
-      email: {
+      major: {
         type: Sequelize.STRING
       },
-      expire: {
+      start_date: {
+        type: Sequelize.DATE
+      },
+      end_date: {
         type: Sequelize.DATE
       },
       createdAt: {
@@ -29,6 +39,6 @@ module.exports = {
     });
   },
   async down(queryInterface, Sequelize) {
-    await queryInterface.dropTable('Otps');
+    await queryInterface.dropTable('Education');
   }
 };
