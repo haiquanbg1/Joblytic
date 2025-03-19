@@ -2,6 +2,8 @@ const { successResponse, errorResponse } = require("../utils/response");
 const { StatusCodes } = require("http-status-codes");
 const userService = require("../services/userService");
 const otpService = require("../services/otpService");
+const applicantService = require("../services/applicantService");
+const companyService = require("../services/companyService");
 const bcrypt = require("bcryptjs");
 const { createAccessToken, createRefreshToken } = require("../utils/jwt");
 const ms = require("ms");
@@ -55,7 +57,7 @@ const login = async (req, res) => {
 }
 
 const register = async (req, res) => {
-    const { password, name } = req.body;
+    const { password, name, role } = req.body;
     const email = req.body.email.toLowerCase();
 
     const user = await userService.findOne({ email });
@@ -72,8 +74,18 @@ const register = async (req, res) => {
             name,
             email,
             password: hashPassword,
-            role: "applicant"
+            role: role
         });
+
+        if (role == "applicant") {
+            await applicantService.create({
+                user_id: user.id
+            });
+        } else {
+            await companyService.create({
+                user_id: user.id
+            });
+        }
 
         const accessToken = createAccessToken({
             userId: user.id

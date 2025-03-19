@@ -11,13 +11,6 @@ module.exports = (sequelize, DataTypes) => {
      */
     static associate(models) {
       // define association here
-      User.belongsToMany(models.Skill, {
-        through: 'UserSkill',
-        foreignKey: 'user_id',
-        otherKey: 'skill_id',
-        as: 'skills'
-      });
-
       User.belongsToMany(models.Job, {
         through: 'SaveJob',
         foreignKey: 'user_id',
@@ -33,16 +26,6 @@ module.exports = (sequelize, DataTypes) => {
       User.hasOne(models.Company, {
         foreignKey: 'user_id',
         as: 'company'
-      });
-
-      User.hasMany(models.Experience, {
-        foreignKey: 'user_id',
-        as: 'experiences'
-      });
-
-      User.hasMany(models.Application, {
-        foreignKey: "user_id",
-        as: "applications"
       });
     }
   }

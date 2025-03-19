@@ -16,11 +16,11 @@ module.exports = (sequelize, DataTypes) => {
         as: 'category'
       });
 
-      Job.belongsToMany(models.User, {
+      Job.belongsToMany(models.Applicant, {
         through: 'SaveJob',
         foreignKey: 'job_id',
-        otherKey: 'user_id',
-        as: 'users'
+        otherKey: 'applicant_id',
+        as: 'applicants'
       });
 
       Job.belongsTo(models.Company, {

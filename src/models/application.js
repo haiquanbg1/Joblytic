@@ -11,9 +11,9 @@ module.exports = (sequelize, DataTypes) => {
      */
     static associate(models) {
       // define association here
-      Application.belongsTo(models.User, {
-        foreignKey: "user_id",
-        as: "user"
+      Application.belongsTo(models.Applicant, {
+        foreignKey: "applicant_id",
+        as: "applicant"
       });
 
       Application.belongsTo(models.Job, {
@@ -24,7 +24,7 @@ module.exports = (sequelize, DataTypes) => {
   }
   Application.init({
     job_id: DataTypes.INTEGER,
-    user_id: DataTypes.STRING,
+    applicant_id: DataTypes.STRING,
     status: DataTypes.ENUM('Pending', 'Accepted', 'Rejected')
   }, {
     sequelize,

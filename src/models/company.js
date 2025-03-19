@@ -33,7 +33,6 @@ module.exports = (sequelize, DataTypes) => {
     website: DataTypes.STRING,
     location: DataTypes.STRING,
     description: DataTypes.TEXT,
-    logo: DataTypes.STRING
   }, {
     sequelize,
     modelName: 'Company',

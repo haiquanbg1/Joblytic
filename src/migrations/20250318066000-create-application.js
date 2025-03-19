@@ -16,10 +16,10 @@ module.exports = {
           key: 'id'
         }
       },
-      user_id: {
+      applicant_id: {
         type: Sequelize.INTEGER,
         references: {
-          model: 'Users',
+          model: 'Applicants',
           key: 'id'
         }
       },

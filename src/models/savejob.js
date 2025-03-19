@@ -11,11 +11,11 @@ module.exports = (sequelize, DataTypes) => {
      */
     static associate(models) {
       // define association here
-      SaveJob.belongsTo(models.User, {
-        foreignKey: "user_id",
+      SaveJob.belongsTo(models.Applicant, {
+        foreignKey: "applicant_id",
         onDelete: 'CASCADE',
         onUpdate: 'CASCADE',
-        as: "user"
+        as: "applicant"
       });
 
       SaveJob.belongsTo(models.Job, {
@@ -28,7 +28,7 @@ module.exports = (sequelize, DataTypes) => {
   }
   SaveJob.init({
     job_id: DataTypes.INTEGER,
-    user_id: DataTypes.STRING
+    applicant_id: DataTypes.STRING
   }, {
     sequelize,
     modelName: 'SaveJob',

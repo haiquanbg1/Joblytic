@@ -11,14 +11,14 @@ module.exports = (sequelize, DataTypes) => {
      */
     static associate(models) {
       // define association here
-      Experience.belongsTo(models.User, {
-        foreignKey: 'user_id',
-        as: 'user'
+      Experience.belongsTo(models.Applicant, {
+        foreignKey: 'applicant_id',
+        as: 'applicant'
       });
     }
   }
   Experience.init({
-    user_id: DataTypes.INTEGER,
+    applicant_id: DataTypes.INTEGER,
     company: DataTypes.STRING,
     position: DataTypes.STRING,
     start_date: DataTypes.DATE,
