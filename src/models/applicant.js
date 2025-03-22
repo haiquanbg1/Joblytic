@@ -16,11 +16,6 @@ module.exports = (sequelize, DataTypes) => {
         as: 'user'
       });
 
-      Applicant.hasMany(models.Message, {
-        foreignKey: "applicant_id",
-        as: "messages"
-      });
-
       Applicant.hasMany(models.Experience, {
         foreignKey: 'applicant_id',
         as: 'experiences'
@@ -41,6 +36,13 @@ module.exports = (sequelize, DataTypes) => {
         foreignKey: 'applicant_id',
         otherKey: 'skill_id',
         as: 'skills'
+      });
+
+      Applicant.belongsToMany(models.Job, {
+        through: 'SaveJob',
+        foreignKey: 'applicant_id',
+        otherKey: 'Job_id',
+        as: 'Jobs'
       });
     }
   }

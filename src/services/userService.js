@@ -16,7 +16,7 @@ const create = async (insertClause) => {
     return await User.create(insertClause);
 };
 
-const drop = async (id) => {
+const destroy = async (id) => {
     return await User.destroy({
         where: {
             id: id,
@@ -36,6 +36,6 @@ module.exports = {
     findAll,
     findOne,
     create,
-    drop,
+    destroy,
     update,
 };

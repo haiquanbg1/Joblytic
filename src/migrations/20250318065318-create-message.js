@@ -9,17 +9,17 @@ module.exports = {
         primaryKey: true,
         type: Sequelize.INTEGER
       },
-      applicant_id: {
+      sender_id: {
         type: Sequelize.INTEGER,
         references: {
-          model: 'Applicants',
+          model: 'Users',
           key: 'id'
         }
       },
-      company_id: {
+      receiver_id: {
         type: Sequelize.INTEGER,
         references: {
-          model: 'Companies',
+          model: 'Users',
           key: 'id'
         }
       },
@@ -37,6 +37,6 @@ module.exports = {
     });
   },
   async down(queryInterface, Sequelize) {
-    await queryInterface.dropTable('Messages');
+    await queryInterface.destroyTable('Messages');
   }
 };

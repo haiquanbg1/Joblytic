@@ -11,6 +11,7 @@ const passport = require("./passport");
 const { corsOptions } = require("../config/corsOptions");
 const http = require("http");
 const mongodb = require("../utils/mongodb");
+const socketIo = require("socket.io");
 
 module.exports = (app) => {
     app.use(
@@ -56,6 +57,31 @@ module.exports = (app) => {
     mongodb();
 
     const server = http.createServer(app);
+    const io = socketIo(server);
+
+    // Lắng nghe sự kiện kết nối từ client
+    let users = {}; // Lưu trữ các kết nối người dùng, sử dụng userId làm khóa
+
+    // Lắng nghe kết nối
+    io.on('connection', (socket) => {
+        const { channelId } = socket.handshake.query;
+        socket.join(channelId);
+
+        //console.log(`User connected to channel: ${channelId}`);
+
+        // Lắng nghe sự kiện 'message' từ máy khách
+        socket.on('send_message', (msg) => {
+            console.log('Message from client:', msg);
+
+            // Gửi lại sự kiện 'message' đến tất cả các máy khách
+            io.to(channelId).emit('receive_message', msg);
+        });
+
+        // Khi người dùng ngắt kết nối
+        socket.on('disconnect', () => {
+            console.log(`User disconnected from channel: ${channelId}`);
+        });
+    });
 
     // Bắt đầu lắng nghe trên một cổng cụ thể, ví dụ: cổng 8080
     const port = process.env.PORT || 8080;

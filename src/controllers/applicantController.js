@@ -2,6 +2,7 @@ const { StatusCodes } = require("http-status-codes");
 const applicantService = require("../services/applicantService");
 const skillService = require("../services/skillService");
 const experienceService = require("../services/experienceService");
+const userService = require("../services/userService");
 const { successResponse, errorResponse } = require("../utils/response");
 const { getFile } = require("../utils/minio");
 
@@ -44,10 +45,11 @@ const findOne = async (req, res) => {
 }
 
 const update = async (req, res) => {
-    const { salary, location, github, facebook, linkedin, birthday, description } = req.body;
+    const { salary, location, github, facebook, linkedin, birthday, description, name, email, phone } = req.body;
     const applicant = req.applicant;
+    const user = req.user;
 
-    const updateClause = Object.assign(
+    const updateApplicant = Object.assign(
         {},
         salary && { salary },
         location && { location },
@@ -58,8 +60,16 @@ const update = async (req, res) => {
         description && { description },
     );
 
+    const updateUser = Object.assign(
+        {},
+        name && { name },
+        email && { email },
+        phone && { phone },
+    );
+
     try {
-        await applicantService.update(applicant.id, updateClause);
+        await applicantService.update(applicant.id, updateApplicant);
+        await userService.update(user.id, updateUser);
 
         return successResponse(res, StatusCodes.OK, "Cập nhật thành công.");
     } catch (error) {
